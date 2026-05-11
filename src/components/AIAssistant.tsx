@@ -1,286 +1,155 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, ChevronRight, ChevronLeft, Check, Send, Phone, Mail } from "lucide-react";
+import { X, Send, User, Sparkles, MessageSquare } from "lucide-react";
+import { GoogleGenAI } from "@google/genai";
 
-interface WizardProps {
+interface AIAssistantProps {
   isOpen: boolean;
   onClose: () => void;
-  initialStep?: number;
 }
 
-const services = [
-  "Вторичная недвижимость",
-  "Новостройки Москвы",
-  "Аренда жилых помещений",
-  "Коммерческая недвижимость",
-  "Инвестиционный консалтинг",
-  "Юридическое сопровождение"
-];
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
-export const AIAssistant = ({ isOpen, onClose, initialStep = 1 }: WizardProps) => {
-  const [step, setStep] = useState(1);
-  
-  useEffect(() => {
-    if (isOpen) {
-      setStep(initialStep);
+export const AIAssistant = ({ isOpen, onClose }: AIAssistantProps) => {
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([
+    { 
+      role: "assistant", 
+      content: "Здравствуйте! Я ваш интеллектуальный помощник Юлии Шведовой. Я помогу вам сориентироваться в рынке недвижимости Москвы, подобрать лучшие ЖК или ответить на вопросы по услугам Юлии. О чем вы хотели бы узнать?" 
     }
-  }, [isOpen, initialStep]);
-  const [formData, setFormData] = useState({
-    service: "",
-    propertyType: "",
-    budget: "",
-    name: "",
-    phone: "",
-    telegram: "",
-    email: ""
-  });
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
-  const nextStep = () => setStep(prev => prev + 1);
-  const prevStep = () => setStep(prev => prev - 1);
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    const userMessage = input.trim();
+    setInput("");
+    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
+    setIsLoading(true);
 
-  const handleServiceSelect = (service: string) => {
-    setFormData(prev => ({ ...prev, service }));
-    nextStep();
-  };
+    try {
+      const prompt = `Вы — ИИ-помощник Юлии Шведовой, ведущего эксперта по люксовой недвижимости Москвы. 
+      Отвечайте в изысканном, профессиональном и лаконичном стиле. 
+      Ваша задача: консультировать клиентов Юлии по вопросам покупки, продажи и аренды жилья в Москве.
+      Упоминайте, что Юлия специализируется на премиальных объектах (Остоженка, Хамовники, Москва-Сити).
+      Если пользователь хочет оставить заявку, предложите ему заполнить форму консультации (Юлия свяжется лично).
+      
+      История диалога: ${messages.map(m => `${m.role}: ${m.content}`).join("\n")}
+      Пользователь: ${userMessage}`;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
-  };
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+      });
 
-  const resetWizard = () => {
-    setStep(1);
-    setFormData({
-      service: "",
-      propertyType: "",
-      budget: "",
-      name: "",
-      phone: "",
-      telegram: "",
-      email: ""
-    });
-    setIsSuccess(false);
-    onClose();
+      const text = response.text || "Извините, я не смог сформировать ответ.";
+
+      setMessages(prev => [...prev, { role: "assistant", content: text }]);
+    } catch (error) {
+      console.error("AI Assistant Error:", error);
+      setMessages(prev => [...prev, { role: "assistant", content: "Прошу прощения, возникла техническая заминка. Пожалуйста, попробуйте позже или свяжитесь с Юлией напрямую через форму." }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={resetWizard}
+            onClick={onClose}
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200]"
           />
           
-          {/* Sidebar */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 w-full md:w-[500px] bg-white z-[201] shadow-2xl flex flex-col overflow-hidden"
+            className="fixed inset-y-0 right-0 w-full md:w-[500px] bg-luxury-charcoal z-[201] shadow-2xl flex flex-col overflow-hidden text-white"
           >
-            {/* Header */}
-            <div className="p-8 border-b border-luxury-stone flex items-center justify-between bg-luxury-cream/30">
-              <div className="flex flex-col">
-                <span className="font-serif italic text-2xl text-luxury-charcoal leading-none">Юлия Шведова</span>
-                <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold mt-2">Консультация</span>
+            <div className="p-8 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-luxury-gold rounded-full flex items-center justify-center text-luxury-charcoal">
+                    <Sparkles size={20} />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-serif italic text-xl leading-none">AI Assistant</span>
+                  <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold mt-1">Shvedova Private Estate</span>
+                </div>
               </div>
               <button 
-                onClick={resetWizard}
-                className="p-3 hover:bg-luxury-stone/50 transition-colors rounded-full text-luxury-charcoal"
+                onClick={onClose}
+                className="p-3 hover:bg-white/10 transition-colors rounded-full text-white"
               >
                 <X size={24} />
               </button>
             </div>
 
-            {/* Progress Bar */}
-            {!isSuccess && (
-              <div className="h-1 bg-luxury-stone w-full flex">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(step / 3) * 100}%` }}
-                  className="h-full bg-luxury-gold"
-                />
-              </div>
-            )}
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col bg-[#FAFAFA]">
-              <AnimatePresence mode="wait">
-                {isSuccess ? (
-                  <motion.div 
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex-1 flex flex-col items-center justify-center text-center"
-                  >
-                    <div className="w-20 h-20 bg-luxury-gold rounded-full flex items-center justify-center mb-8 shadow-inner">
-                      <Check size={40} className="text-white" />
-                    </div>
-                    <h2 className="text-3xl font-serif mb-4 text-luxury-charcoal">Запрос принят</h2>
-                    <p className="text-luxury-charcoal/60 leading-relaxed mb-10 max-w-sm">
-                      Юлия изучит ваши пожелания и свяжется с вами в течение 30 минут.
-                    </p>
-                    <button onClick={resetWizard} className="luxury-button w-full">Закрыть окно</button>
-                  </motion.div>
-                ) : (
-                  <div className="flex-1 flex flex-col">
-                    {step === 1 && (
-                      <motion.div
-                        key="step1"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-8"
-                      >
-                        <h2 className="text-3xl font-serif text-luxury-charcoal">Выберите категорию интереса</h2>
-                        <div className="grid grid-cols-1 gap-4">
-                          {services.map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => handleServiceSelect(s)}
-                              className="w-full text-left p-6 border border-luxury-stone bg-white hover:border-luxury-gold hover:bg-luxury-cream/10 transition-all group flex justify-between items-center rounded-sm"
-                            >
-                              <span className="text-luxury-charcoal font-medium">{s}</span>
-                              <ChevronRight size={18} className="text-luxury-stone group-hover:text-luxury-gold group-hover:translate-x-1 transition-all" />
-                            </button>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {step === 2 && (
-                      <motion.div
-                        key="step2"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-8"
-                      >
-                        <h2 className="text-3xl font-serif text-luxury-charcoal">Детали запроса</h2>
-                        <p className="text-luxury-gold font-bold text-xs uppercase tracking-widest">{formData.service}</p>
-                        
-                        <div className="space-y-8">
-                          <div className="group">
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-4">Локация или ЖК</label>
-                            <input 
-                              name="propertyType"
-                              value={formData.propertyType}
-                              onChange={handleInputChange}
-                              placeholder="Например: Остоженка или ЖК Бадаевский"
-                              className="w-full bg-transparent border-b border-luxury-stone py-3 text-lg outline-none focus:border-luxury-gold transition-colors"
-                            />
-                          </div>
-                          <div className="group">
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-4">Планируемый бюджет (₽)</label>
-                            <input 
-                              name="budget"
-                              value={formData.budget}
-                              onChange={handleInputChange}
-                              placeholder="Ценовой диапазон"
-                              className="w-full bg-transparent border-b border-luxury-stone py-3 text-lg outline-none focus:border-luxury-gold transition-colors"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="pt-8 flex gap-4">
-                          <button onClick={prevStep} className="p-5 border border-luxury-stone uppercase text-[10px] tracking-widest font-bold flex items-center gap-2 hover:bg-luxury-stone transition-colors">
-                            <ChevronLeft size={16} /> Назад
-                          </button>
-                          <button onClick={nextStep} className="flex-1 bg-luxury-charcoal text-white uppercase text-[10px] tracking-widest font-bold py-5 flex items-center justify-center gap-2 hover:bg-luxury-gold hover:text-luxury-charcoal transition-all">
-                            Продолжить <ChevronRight size={16} />
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {step === 3 && (
-                      <motion.div
-                        key="step3"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        className="space-y-10"
-                      >
-                        <h2 className="text-3xl font-serif text-luxury-charcoal">Как с вами связаться?</h2>
-                        
-                        <div className="space-y-8">
-                          <div>
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-4">Имя</label>
-                            <input 
-                              name="name"
-                              value={formData.name}
-                              onChange={handleInputChange}
-                              placeholder="Ваше имя"
-                              className="w-full bg-transparent border-b border-luxury-stone py-3 text-lg outline-none focus:border-luxury-gold transition-colors"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-4 flex items-center gap-2">
-                              <Phone size={12} className="text-luxury-gold" /> Телефон
-                            </label>
-                            <input 
-                              name="phone"
-                              value={formData.phone}
-                              onChange={handleInputChange}
-                              placeholder="+7 (___) ___-__-__"
-                              className="w-full bg-transparent border-b border-luxury-stone py-3 text-lg outline-none focus:border-luxury-gold transition-colors"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-4 flex items-center gap-2">
-                               <Send size={12} className="text-luxury-gold" /> Telegram / WhatsApp
-                            </label>
-                            <input 
-                              name="telegram"
-                              value={formData.telegram}
-                              onChange={handleInputChange}
-                              placeholder="@username или номер"
-                              className="w-full bg-transparent border-b border-luxury-stone py-3 text-lg outline-none focus:border-luxury-gold transition-colors"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="pt-8 flex gap-4">
-                          <button onClick={prevStep} className="p-5 border border-luxury-stone hover:bg-luxury-stone transition-colors group">
-                            <ChevronLeft size={16} className="text-luxury-charcoal" />
-                          </button>
-                          <button 
-                            onClick={handleSubmit}
-                            disabled={isSubmitting}
-                            className="flex-1 bg-luxury-gold text-luxury-charcoal uppercase text-[10px] tracking-widest font-bold py-5 hover:bg-luxury-charcoal hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-3"
-                          >
-                            {isSubmitting ? "Отправка..." : "Отправить запрос"}
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
+            <div 
+              ref={scrollRef}
+              className="flex-1 overflow-y-auto p-8 space-y-6 scroll-smooth"
+            >
+              {messages.map((msg, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  key={i}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div className={`max-w-[85%] p-5 rounded-sm ${
+                    msg.role === "user" 
+                      ? "bg-luxury-gold text-luxury-charcoal" 
+                      : "bg-white/5 border border-white/10 text-white/90"
+                  }`}>
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                   </div>
-                )}
-              </AnimatePresence>
+                </motion.div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-white/5 border border-white/10 p-5 rounded-sm flex gap-2">
+                    <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-luxury-gold rounded-full" />
+                    <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-luxury-gold rounded-full" />
+                    <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-luxury-gold rounded-full" />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Footer info */}
-            <div className="p-8 border-t border-luxury-stone bg-white text-[9px] uppercase tracking-widest opacity-40 flex justify-between items-center">
-              <span>Конфиденциальность 100%</span>
-              <span>Shvedova Private Estate</span>
+            <div className="p-8 bg-black/20 border-t border-white/10">
+              <div className="relative flex items-center">
+                <input 
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                  placeholder="Ваш вопрос..."
+                  className="w-full bg-white/5 border border-white/20 px-6 py-5 pr-16 text-sm rounded-sm focus:border-luxury-gold outline-none transition-all placeholder:text-white/20"
+                />
+                <button 
+                  onClick={handleSend}
+                  disabled={!input.trim() || isLoading}
+                  className="absolute right-4 p-2 text-luxury-gold hover:text-white transition-colors disabled:opacity-30"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+              <p className="text-[10px] text-white/30 text-center mt-6 uppercase tracking-widest">
+                Сгенерировано ИИ для Юлии Шведовой
+              </p>
             </div>
           </motion.div>
         </>

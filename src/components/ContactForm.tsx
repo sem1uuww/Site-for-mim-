@@ -5,7 +5,7 @@ interface ContactFormProps {
   onContactClick: () => void;
 }
 
-export const ContactForm = ({ onContactClick }: ContactFormProps) => {
+export const ContactForm = ({ onContactClick, onAIOpen }: ContactFormProps & { onAIOpen: () => void }) => {
   return (
     <section id="contact" className="py-40 bg-luxury-charcoal text-white overflow-hidden relative">
       {/* Decorative background */}
@@ -21,10 +21,10 @@ export const ContactForm = ({ onContactClick }: ContactFormProps) => {
           transition={{ duration: 1 }}
           className="mb-16"
         >
-          <h2 className="text-5xl md:text-8xl font-serif mb-8 leading-tight">
+          <h2 className="text-5xl md:text-8xl font-serif mb-12 leading-tight">
             Остались <span className="italic font-light text-luxury-gold">вопросы?</span>
           </h2>
-          <p className="text-xl md:text-3xl text-white/60 leading-relaxed max-w-2xl mx-auto font-light">
+          <p className="text-xl md:text-3xl text-white leading-relaxed max-w-3xl mx-auto font-light mb-4">
             Если вы еще сомневаетесь или хотите обсудить 
             индивидуальные условия — я всегда на связи.
           </p>
@@ -35,7 +35,7 @@ export const ContactForm = ({ onContactClick }: ContactFormProps) => {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="flex justify-center"
+          className="flex flex-col items-center gap-8"
         >
           <button 
             onClick={onContactClick}
@@ -48,6 +48,15 @@ export const ContactForm = ({ onContactClick }: ContactFormProps) => {
             <div className="w-16 h-16 bg-luxury-charcoal text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
               <ChevronRight size={32} />
             </div>
+          </button>
+          
+          <button 
+            onClick={onAIOpen}
+            className="text-white/40 hover:text-luxury-gold transition-colors text-[10px] uppercase tracking-[0.4em] font-bold flex items-center gap-4 group"
+          >
+            <span className="w-8 h-px bg-white/20 group-hover:bg-luxury-gold transition-colors" />
+            или спросите моего ИИ помощника
+            <span className="w-8 h-px bg-white/20 group-hover:bg-luxury-gold transition-colors" />
           </button>
         </motion.div>
       </div>

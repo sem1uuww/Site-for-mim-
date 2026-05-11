@@ -9,17 +9,23 @@ import { Stats } from "./components/Stats";
 import { Services } from "./components/Services";
 import { Philosophy } from "./components/Philosophy";
 import { ContactForm } from "./components/ContactForm";
+import { ConsultationWizard } from "./components/ConsultationWizard";
 import { AIAssistant } from "./components/AIAssistant";
-import { Check } from "lucide-react";
+import { Check, Sparkles, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function App() {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
 
   const openWizard = (step: number = 1) => {
     setWizardStep(step);
     setIsWizardOpen(true);
+  };
+
+  const toggleAIChat = () => {
+    setIsAIChatOpen(!isAIChatOpen);
   };
 
   return (
@@ -36,12 +42,20 @@ export default function App() {
           <a href="#culture" className="opacity-50 hover:opacity-100 transition-opacity">Философия</a>
           <span className="text-luxury-gold">Москва, RU</span>
         </nav>
-        <button 
-          onClick={() => openWizard(1)}
-          className="luxury-button-outline px-6 py-3 text-[10px]"
-        >
-          Консультация
-        </button>
+        <div className="flex items-center gap-6">
+          <button 
+            onClick={toggleAIChat}
+            className="w-12 h-12 bg-luxury-charcoal text-white rounded-full flex items-center justify-center hover:bg-luxury-gold hover:text-luxury-charcoal transition-all shadow-lg"
+          >
+            <MessageSquare size={20} />
+          </button>
+          <button 
+            onClick={() => openWizard(1)}
+            className="luxury-button-outline px-6 py-3 text-[10px] hidden md:block"
+          >
+            Консультация
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}
@@ -63,7 +77,10 @@ export default function App() {
         </div>
         
         <div id="inquiry">
-          <ContactForm onContactClick={() => openWizard(3)} />
+          <ContactForm 
+            onContactClick={() => openWizard(3)} 
+            onAIOpen={toggleAIChat}
+          />
         </div>
       </main>
 
@@ -77,33 +94,33 @@ export default function App() {
         <span className="mt-8 md:mt-0">Конфиденциальность гарантирована</span>
       </footer>
 
-      {/* Floating Action Button */}
+      {/* Floating Action Button (AI Assistant) */}
       <AnimatePresence>
-        {!isWizardOpen && (
+        {!isAIChatOpen && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            onClick={() => openWizard(1)}
-            className="fixed bottom-10 right-10 z-40 w-16 h-16 bg-luxury-charcoal text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-luxury-gold hover:text-luxury-charcoal transition-all group overflow-hidden"
+            onClick={toggleAIChat}
+            className="fixed bottom-10 right-10 z-40 w-16 h-16 bg-luxury-gold text-luxury-charcoal rounded-full shadow-2xl flex items-center justify-center hover:bg-luxury-charcoal hover:text-white transition-all group overflow-hidden border-2 border-white"
           >
-            <div className="absolute inset-0 bg-luxury-gold translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4 }}
-              className="relative z-10"
-            >
-              <Check className="group-hover:scale-110 transition-transform" />
-            </motion.div>
+            <div className="absolute inset-0 bg-luxury-charcoal translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <MessageSquare className="relative z-10 group-hover:scale-110 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
 
       {/* Consultation Wizard Sidebar */}
-      <AIAssistant 
+      <ConsultationWizard 
         isOpen={isWizardOpen} 
         onClose={() => setIsWizardOpen(false)} 
         initialStep={wizardStep}
+      />
+
+      {/* AI Assistant Sidebar */}
+      <AIAssistant 
+        isOpen={isAIChatOpen}
+        onClose={() => setIsAIChatOpen(false)}
       />
     </div>
   );
