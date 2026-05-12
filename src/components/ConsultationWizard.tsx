@@ -55,9 +55,28 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send request");
+      }
+
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("Form submission error:", error);
+      alert(error instanceof Error ? error.message : "Произошла ошибка при отправке. Пожалуйста, попробуйте позже.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetWizard = () => {
