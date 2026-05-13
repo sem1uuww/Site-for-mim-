@@ -13,15 +13,15 @@ export const Philosophy = () => {
           className="relative group h-full"
         >
           <div className="absolute -inset-4 border border-luxury-gold/20 translate-x-4 translate-y-4 -z-10 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-700" />
-          <div className="relative overflow-hidden bg-luxury-stone/10 aspect-[3/4] md:aspect-auto md:h-[700px]">
+          <div className="relative overflow-hidden bg-luxury-stone/10 aspect-[3/4] md:aspect-auto md:h-[800px]">
              {/* Note: src/assets/julia.png should contain the image provided by the user */}
             <img 
               src="/src/assets/images/regenerated_image_1778673551334.png" 
-              alt="Julia Shvedova"
-              className="w-full h-full object-cover transition-all duration-1000 scale-105 hover:scale-100"
+              alt="Юлия Шведова"
+              className="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-105"
               onError={(e) => {
-                // Fallback if image not found (for preview consistency)
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop";
+                // Fallback to a high-quality professional portrait if local image is missing
+                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2000&auto=format&fit=crop";
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-luxury-charcoal/40 to-transparent" />
