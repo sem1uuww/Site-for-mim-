@@ -18,7 +18,7 @@ async function startServer() {
 
   // API Route for sending emails
   app.post("/api/contact", async (req, res) => {
-    const { service, propertyType, budget, name, phone, telegram, email } = req.body;
+    const { service, propertyType, city, district, rooms, budget, name, phone, telegram, email } = req.body;
     
     const resendApiKey = process.env.RESEND_API_KEY;
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -37,7 +37,7 @@ async function startServer() {
 
     try {
       const { data, error } = await resend.emails.send({
-        from: 'Shvedova Estate <onboarding@resend.dev>', // You can customize this if you have a verified domain
+        from: 'Shvedova Estate <onboarding@resend.dev>',
         to: [adminEmail],
         subject: `Новая заявка: ${service || 'Консультация'} - ${name}`,
         html: `
@@ -45,13 +45,16 @@ async function startServer() {
             <h2 style="color: #BA9D49;">Новая заявка с сайта Shvedova Estate</h2>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
             <p><strong>Услуга:</strong> ${service || 'Не указано'}</p>
-            <p><strong>Объект/Локация:</strong> ${propertyType || 'Не указано'}</p>
+            <p><strong>Тип объекта:</strong> ${propertyType || 'Не указано'}</p>
+            <p><strong>Город:</strong> ${city || 'Не указано'}</p>
+            <p><strong>Район/ЖК:</strong> ${district || 'Не указано'}</p>
+            ${rooms ? `<p><strong>Комнат:</strong> ${rooms}</p>` : ''}
             <p><strong>Бюджет:</strong> ${budget || 'Не указано'}</p>
             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
             <h3 style="color: #2C2C2C;">Контактные данные клиента:</h3>
             <p><strong>Имя:</strong> ${name}</p>
             <p><strong>Телефон:</strong> ${phone}</p>
-            <p><strong>Telegram/WhatsApp:</strong> ${telegram || 'Не указано'}</p>
+            <p><strong>Telegram:</strong> @${telegram || 'Не указано'}</p>
             ${email ? `<p><strong>Email:</strong> ${email}</p>` : ''}
             <div style="margin-top: 40px; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 2px;">
               Shvedova Private Estate • Система уведомлений

@@ -5,7 +5,7 @@ interface ContactFormProps {
   onContactClick: () => void;
 }
 
-export const ContactForm = ({ onContactClick, onAIOpen }: ContactFormProps & { onAIOpen: () => void }) => {
+export const ContactForm = ({ onContactClick }: ContactFormProps) => {
   return (
     <section id="contact" className="py-40 bg-luxury-charcoal text-white overflow-hidden relative">
       {/* Decorative background */}
@@ -22,7 +22,7 @@ export const ContactForm = ({ onContactClick, onAIOpen }: ContactFormProps & { o
           className="mb-16"
         >
           <h2 className="text-5xl md:text-8xl font-serif mb-12 leading-tight">
-            Остались <span className="italic font-light text-luxury-gold">вопросы?</span>
+            <span className="text-luxury-gold">Остались</span> <span className="italic font-light text-luxury-gold">вопросы?</span>
           </h2>
           <p className="text-xl md:text-3xl text-white leading-relaxed max-w-3xl mx-auto font-light mb-4">
             Если вы еще сомневаетесь или хотите обсудить 
@@ -48,15 +48,6 @@ export const ContactForm = ({ onContactClick, onAIOpen }: ContactFormProps & { o
             <div className="w-16 h-16 bg-luxury-charcoal text-white rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
               <ChevronRight size={32} />
             </div>
-          </button>
-          
-          <button 
-            onClick={onAIOpen}
-            className="text-white/40 hover:text-luxury-gold transition-colors text-[10px] uppercase tracking-[0.4em] font-bold flex items-center gap-4 group"
-          >
-            <span className="w-8 h-px bg-white/20 group-hover:bg-luxury-gold transition-colors" />
-            или спросите моего ИИ помощника
-            <span className="w-8 h-px bg-white/20 group-hover:bg-luxury-gold transition-colors" />
           </button>
         </motion.div>
       </div>
