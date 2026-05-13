@@ -296,16 +296,23 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                             </div>
                           </div>
 
-                          <div className="group">
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Город</label>
-                            <input 
-                              name="city"
-                              value={formData.city}
-                              onChange={handleInputChange}
-                              placeholder="Например: Анталия или Стамбул"
-                              className="w-full bg-transparent border-b border-luxury-stone py-2 text-base outline-none focus:border-luxury-gold transition-colors"
-                            />
-                          </div>
+                          {[
+                            "Недвижимость в Турции",
+                            "Недвижимость Краснодарского края",
+                            "Коммерческая недвижимость",
+                            "Частные дома и загородная недвижимость"
+                          ].includes(formData.service) && (
+                            <div className="group">
+                              <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Город</label>
+                              <input 
+                                name="city"
+                                value={formData.city}
+                                onChange={handleInputChange}
+                                placeholder=""
+                                className="w-full bg-transparent border-b border-luxury-stone py-2 text-base outline-none focus:border-luxury-gold transition-colors"
+                              />
+                            </div>
+                          )}
 
                           <div className="group">
                             <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Район или ЖК</label>
@@ -313,7 +320,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                               name="district"
                               value={formData.district}
                               onChange={handleInputChange}
-                              placeholder="Например: Муратпаша"
+                              placeholder=""
                               className="w-full bg-transparent border-b border-luxury-stone py-2 text-base outline-none focus:border-luxury-gold transition-colors"
                             />
                           </div>

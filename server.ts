@@ -46,7 +46,7 @@ async function startServer() {
             <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
             <p><strong>Услуга:</strong> ${service || 'Не указано'}</p>
             <p><strong>Тип объекта:</strong> ${propertyType || 'Не указано'}</p>
-            <p><strong>Город:</strong> ${city || 'Не указано'}</p>
+            ${city ? `<p><strong>Город:</strong> ${city}</p>` : ''}
             <p><strong>Район/ЖК:</strong> ${district || 'Не указано'}</p>
             ${rooms ? `<p><strong>Комнат:</strong> ${rooms}</p>` : ''}
             <p><strong>Бюджет:</strong> ${budget || 'Не указано'}</p>
