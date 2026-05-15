@@ -1,14 +1,22 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";
-import { createServer as createViteServer } from "vite";
 import { Resend } from "resend";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+let resendClient: Resend | null = null;
+
+function getResend() {
+  if (!resendClient) {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) {
+      throw new Error("RESEND_API_KEY is not configured on the server.");
+    }
+    resendClient = new Resend(key);
+  }
+  return resendClient;
+}
 
 async function startServer() {
   const app = express();
@@ -20,22 +28,15 @@ async function startServer() {
   app.post("/api/contact", async (req, res) => {
     const { service, propertyType, city, district, rooms, budget, name, phone, telegram, email } = req.body;
     
-    const resendApiKey = process.env.RESEND_API_KEY;
     const adminEmail = process.env.ADMIN_EMAIL;
-
-    if (!resendApiKey) {
-      console.error("RESEND_API_KEY is not set");
-      return res.status(500).json({ error: "Server configuration error: Please check your API keys." });
-    }
 
     if (!adminEmail) {
       console.error("ADMIN_EMAIL is not set");
       return res.status(500).json({ error: "Server configuration error: Admin email not configured." });
     }
 
-    const resend = new Resend(resendApiKey);
-
     try {
+      const resend = getResend();
       const { data, error } = await resend.emails.send({
         from: 'Shvedova Estate <onboarding@resend.dev>',
         to: [adminEmail],
@@ -75,6 +76,7 @@ async function startServer() {
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",

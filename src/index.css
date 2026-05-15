@@ -15,20 +15,22 @@
 
 @layer base {
   body {
-    @apply bg-luxury-cream text-luxury-charcoal font-sans antialiased selection:bg-luxury-gold/30 text-lg;
+    @apply bg-luxury-cream text-luxury-charcoal font-sans antialiased selection:bg-luxury-gold/30 text-lg overflow-x-hidden;
     scroll-behavior: smooth;
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   
   h1 {
-    @apply font-serif tracking-tight text-[#2C2C2C] text-7xl md:text-8xl;
+    @apply font-serif tracking-tight text-[#2C2C2C] text-4xl sm:text-5xl md:text-7xl lg:text-8xl;
   }
   
   h2 {
-    @apply font-serif tracking-tight text-[#2C2C2C] text-5xl md:text-6xl;
+    @apply font-serif tracking-tight text-[#2C2C2C] text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
   }
 
   h3 {
-    @apply font-serif tracking-tight text-[#2C2C2C] text-3xl md:text-4xl;
+    @apply font-serif tracking-tight text-[#2C2C2C] text-2xl sm:text-3xl md:text-4xl;
   }
 }
 

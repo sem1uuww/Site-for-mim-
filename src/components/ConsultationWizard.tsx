@@ -11,7 +11,7 @@ interface WizardProps {
 const services = [
   "Вторичная недвижимость в Москве",
   "Новостройки Москвы",
-  "Недвижимость СПб",
+  "Недвижимость Санкт-Петербурга",
   "Недвижимость Краснодарского края",
   "Недвижимость в Турции",
   "Аренда жилых помещений в Москве",
@@ -109,7 +109,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
     // Check for Russian characters
     const russianChars = /[а-яА-ЯёЁ]/;
     if (russianChars.test(value)) {
-      setTelegramError("Username в Telegram может содержать только английские буквы");
+      setTelegramError("Имя пользователя в Telegram может содержать только латинские буквы");
       // Still don't allow Russian chars in state? User said "can only write in English"
       return; 
     } else {
@@ -220,7 +220,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto p-8 md:p-12 flex flex-col bg-[#FAFAFA]">
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8 md:p-12 flex flex-col bg-[#FAFAFA]">
               <AnimatePresence mode="wait">
                 {isSuccess ? (
                   <motion.div 
@@ -229,11 +229,11 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                     animate={{ opacity: 1, scale: 1 }}
                     className="flex-1 flex flex-col items-center justify-center text-center"
                   >
-                    <div className="w-20 h-20 bg-luxury-gold rounded-full flex items-center justify-center mb-8 shadow-inner">
-                      <Check size={40} className="text-white" />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-luxury-gold rounded-full flex items-center justify-center mb-8 shadow-inner">
+                      <Check size={32} className="text-white" />
                     </div>
-                    <h2 className="text-3xl font-serif mb-4 text-luxury-charcoal">Запрос принят</h2>
-                    <p className="text-luxury-charcoal/60 leading-relaxed mb-10 max-w-sm">
+                    <h2 className="text-2xl sm:text-3xl font-serif mb-4 text-luxury-charcoal">Запрос принят</h2>
+                    <p className="text-sm sm:text-base text-luxury-charcoal/60 leading-relaxed mb-10 max-w-sm">
                       Юлия изучит ваши пожелания и свяжется с вами в течение 30 минут.
                     </p>
                     <button onClick={resetWizard} className="luxury-button w-full">Закрыть окно</button>
@@ -246,17 +246,17 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="space-y-8"
+                        className="space-y-6 sm:space-y-8"
                       >
-                        <h2 className="text-3xl font-serif text-luxury-charcoal">Выберите категорию интереса</h2>
-                        <div className="grid grid-cols-1 gap-4">
+                        <h2 className="text-2xl sm:text-3xl font-serif text-luxury-charcoal">Выберите категорию интереса</h2>
+                        <div className="grid grid-cols-1 gap-3 sm:gap-4">
                           {services.map((s) => (
                             <button
                               key={s}
                               onClick={() => handleServiceSelect(s)}
-                              className="w-full text-left p-6 border border-luxury-stone bg-white hover:border-luxury-gold hover:bg-luxury-cream/10 transition-all group flex justify-between items-center rounded-sm"
+                              className="w-full text-left p-4 sm:p-6 border border-luxury-stone bg-white hover:border-luxury-gold hover:bg-luxury-cream/10 transition-all group flex justify-between items-center rounded-sm"
                             >
-                              <span className="text-luxury-charcoal font-medium">{s}</span>
+                              <span className="text-sm sm:text-base text-luxury-charcoal font-medium">{s}</span>
                               <ChevronRight size={18} className="text-luxury-stone group-hover:text-luxury-gold group-hover:translate-x-1 transition-all" />
                             </button>
                           ))}
@@ -272,7 +272,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                         exit={{ opacity: 0, x: -20 }}
                         className="space-y-6"
                       >
-                        <h2 className="text-3xl font-serif text-luxury-charcoal">
+                        <h2 className="text-2xl sm:text-3xl font-serif text-luxury-charcoal">
                           {initialStep === 3 ? "Связаться со мной" : "Детали запроса"}
                         </h2>
                         {formData.service && (
@@ -327,7 +327,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
 
                           {formData.propertyType === "Квартира" && (
                             <div className="group">
-                              <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Кол-во комнат</label>
+                              <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Количество комнат</label>
                               <div className="flex flex-wrap gap-2">
                                 {["Студия", "1", "2", "3", "4", "5+"].map(num => (
                                   <button
