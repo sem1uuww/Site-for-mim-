@@ -24,10 +24,10 @@ export const Philosophy = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-luxury-charcoal/40 to-transparent" />
           </div>
-          <div className="absolute bottom-8 right-4 md:-right-12 bg-white p-6 md:p-8 shadow-2xl max-w-[240px] md:max-w-[280px]">
-            <p className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold mb-2">Основатель</p>
-            <h4 className="font-serif italic text-xl md:text-2xl text-luxury-charcoal">Юлия Шведова</h4>
-            <div className="w-12 h-px bg-luxury-gold mt-4" />
+          <div className="absolute bottom-4 right-0 md:bottom-8 md:-right-12 bg-white p-3 md:p-8 shadow-2xl max-w-[150px] md:max-w-[280px]">
+            <p className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em] font-bold text-luxury-gold mb-1 md:mb-2">Основатель</p>
+            <h4 className="font-serif italic text-lg md:text-2xl text-luxury-charcoal leading-tight">Юлия Шведова</h4>
+            <div className="w-8 md:w-12 h-px bg-luxury-gold mt-2 md:mt-4" />
           </div>
         </motion.div>
 
@@ -71,7 +71,7 @@ export const Philosophy = () => {
             
             <div className="mt-8 flex items-center justify-between">
               <span className="text-[10px] uppercase tracking-[0.5em] font-bold text-luxury-charcoal/40">Юлия Шведова • Частная практика</span>
-              <span className="font-serif italic text-luxury-charcoal text-xl">С 2021 года</span>
+              <span className="font-serif italic text-luxury-charcoal text-xl">С 2019 года</span>
             </div>
           </motion.div>
         </div>
