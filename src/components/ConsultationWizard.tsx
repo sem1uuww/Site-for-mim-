@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, ChevronRight, ChevronLeft, Check, Send, Phone } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, Check, Send, Phone, Mail } from "lucide-react";
 
 interface WizardProps {
   isOpen: boolean;
@@ -416,6 +416,19 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                             {telegramError && (
                               <p className="text-[10px] text-red-500 mt-2 tracking-wide font-medium uppercase">{telegramError}</p>
                             )}
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-4 flex items-center gap-2">
+                               <Mail size={12} className="text-luxury-gold" /> Электронная почта
+                            </label>
+                            <input 
+                              name="email"
+                              type="email"
+                              value={formData.email}
+                              onChange={handleInputChange}
+                              placeholder="example@mail.ru"
+                              className="w-full bg-transparent border-b border-luxury-stone py-3 text-lg outline-none focus:border-luxury-gold transition-colors"
+                            />
                           </div>
                         </div>
 
