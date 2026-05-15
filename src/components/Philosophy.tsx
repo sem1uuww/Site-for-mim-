@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import juliaImage from "../assets/images/julia.png";
 
 export const Philosophy = () => {
   return (
@@ -15,11 +16,11 @@ export const Philosophy = () => {
           <div className="absolute -inset-4 border border-luxury-gold/20 translate-x-4 translate-y-4 -z-10 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-700" />
           <div className="relative overflow-hidden bg-luxury-stone/10 aspect-[3/4] md:aspect-auto md:h-[800px]">
             <img 
-              src="/src/assets/images/julia.png" 
+              src={juliaImage} 
               alt="Юлия Шведова"
               className="w-full h-full object-cover object-top transition-all duration-1000 group-hover:scale-105"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2000&auto=format&fit=crop";
+                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2000&auto=format&fit=crop";
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-luxury-charcoal/40 to-transparent" />
