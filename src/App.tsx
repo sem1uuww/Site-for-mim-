@@ -111,7 +111,7 @@ export default function App() {
         
         <div id="inquiry">
           <ContactForm 
-            onContactClick={() => openWizard(3)} 
+            onContactClick={() => openWizard(4)} 
           />
         </div>
       </main>

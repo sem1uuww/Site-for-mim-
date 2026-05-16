@@ -30,6 +30,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
   }, [isOpen, initialStep]);
 
   const [formData, setFormData] = useState({
+    intent: "", // Buy or Sell
     service: "",
     propertyType: "", // Will be used for "Apartment" or "House"
     city: "",
@@ -163,6 +164,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
   const resetWizard = () => {
     setStep(1);
     setFormData({
+      intent: "",
       service: "",
       propertyType: "",
       city: "",
@@ -210,11 +212,11 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
               </button>
             </div>
 
-            {!isSuccess && initialStep !== 3 && (
+            {!isSuccess && initialStep !== 4 && (
               <div className="h-1 bg-luxury-stone w-full flex">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: `${(step / 3) * 100}%` }}
+                  animate={{ width: `${(step / 4) * 100}%` }}
                   className="h-full bg-luxury-gold"
                 />
               </div>
@@ -246,9 +248,50 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
+                        className="space-y-6 sm:space-y-10"
+                      >
+                        <h2 className="text-2xl sm:text-3xl font-serif text-luxury-charcoal text-center md:text-left">Ваша цель</h2>
+                        <div className="grid grid-cols-1 gap-4">
+                          <button
+                            onClick={() => { setFormData(prev => ({ ...prev, intent: "Купить" })); nextStep(); }}
+                            className="group h-32 md:h-40 border border-luxury-stone bg-white hover:border-luxury-gold hover:bg-luxury-cream/10 transition-all flex items-center justify-center relative rounded-sm"
+                          >
+                            <div className="flex flex-col items-center">
+                              <span className="text-2xl md:text-3xl font-serif italic text-luxury-charcoal">Купить</span>
+                              <span className="text-[9px] uppercase tracking-widest font-bold text-luxury-gold mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Поиск недвижимости</span>
+                            </div>
+                            <ChevronRight size={18} className="absolute right-6 text-luxury-stone opacity-0 group-hover:opacity-100 transition-all" />
+                          </button>
+                          
+                          <button
+                            onClick={() => { setFormData(prev => ({ ...prev, intent: "Продать/Сдать" })); nextStep(); }}
+                            className="group h-32 md:h-40 border border-luxury-stone bg-white hover:border-luxury-gold hover:bg-luxury-cream/10 transition-all flex items-center justify-center relative rounded-sm"
+                          >
+                            <div className="flex flex-col items-center px-4">
+                              <span className="text-xl md:text-3xl font-serif italic text-luxury-charcoal text-center leading-tight">Продать или сдать в аренду</span>
+                              <span className="text-[9px] uppercase tracking-widest font-bold text-luxury-gold mt-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Оценка и реализация</span>
+                            </div>
+                            <ChevronRight size={18} className="absolute right-6 text-luxury-stone opacity-0 group-hover:opacity-100 transition-all" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {step === 2 && (
+                      <motion.div
+                        key="step2"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
                         className="space-y-6 sm:space-y-8"
                       >
-                        <h2 className="text-2xl sm:text-3xl font-serif text-luxury-charcoal">Выберите категорию интереса</h2>
+                        <div className="flex items-center justify-between mb-2">
+                           <h2 className="text-2xl sm:text-3xl font-serif text-luxury-charcoal">Выберите категорию</h2>
+                           <button onClick={prevStep} className="text-[10px] uppercase tracking-widest font-bold text-luxury-stone hover:text-luxury-gold flex items-center gap-1 transition-colors">
+                             <ChevronLeft size={12} /> Назад
+                           </button>
+                        </div>
+                        
                         <div className="grid grid-cols-1 gap-3 sm:gap-4">
                           {services.map((s) => (
                             <button
@@ -264,37 +307,55 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                       </motion.div>
                     )}
 
-                    {step === 2 && (
+                    {step === 3 && (
                       <motion.div
-                        key="step2"
+                        key="step3"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         className="space-y-6"
                       >
                         <h2 className="text-2xl sm:text-3xl font-serif text-luxury-charcoal">
-                          {initialStep === 3 ? "Связаться со мной" : "Детали запроса"}
+                          {initialStep === 4 ? "Связаться со мной" : "Детали запроса"}
                         </h2>
-                        {formData.service && (
-                          <p className="text-luxury-gold font-bold text-xs uppercase tracking-widest">{formData.service}</p>
-                        )}
+                        <div className="flex gap-4 items-center">
+                          {formData.intent && (
+                            <p className="text-luxury-gold font-bold text-[9px] uppercase tracking-[0.2em] bg-luxury-gold/10 px-2 py-1 rounded-sm">{formData.intent}</p>
+                          )}
+                          {formData.service && (
+                            <p className="text-luxury-charcoal opacity-60 font-medium text-[9px] uppercase tracking-[0.15em]">{formData.service}</p>
+                          )}
+                        </div>
                         
                         <div className="space-y-6">
-                          <div className="group">
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Тип недвижимости</label>
-                            <div className="flex gap-2">
-                              {["Квартира", "Частный дом", "Коммерция"].map(type => (
-                                <button
-                                  key={type}
-                                  type="button"
-                                  onClick={() => setFormData(prev => ({ ...prev, propertyType: type }))}
-                                  className={`flex-1 py-3 border text-xs tracking-widest uppercase transition-all ${formData.propertyType === type ? 'bg-luxury-gold border-luxury-gold text-white' : 'border-luxury-stone text-luxury-charcoal hover:border-luxury-gold'}`}
-                                >
-                                  {type}
-                                </button>
-                              ))}
+                          {![
+                            "Аренда жилых помещений в Москве",
+                            "Коммерческая недвижимость",
+                            "Частные дома и загородная недвижимость"
+                          ].includes(formData.service) && (
+                            <div className="group">
+                              <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Тип недвижимости</label>
+                              <div className="flex gap-2">
+                                {["Квартира", "Частный дом", "Коммерция"]
+                                  .filter(type => {
+                                    if (["Вторичная недвижимость в Москве", "Новостройки Москвы"].includes(formData.service)) {
+                                      return type !== "Коммерция";
+                                    }
+                                    return true;
+                                  })
+                                  .map(type => (
+                                    <button
+                                      key={type}
+                                      type="button"
+                                      onClick={() => setFormData(prev => ({ ...prev, propertyType: type }))}
+                                      className={`flex-1 py-3 border text-xs tracking-widest uppercase transition-all ${formData.propertyType === type ? 'bg-luxury-gold border-luxury-gold text-white' : 'border-luxury-stone text-luxury-charcoal hover:border-luxury-gold'}`}
+                                    >
+                                      {type}
+                                    </button>
+                                  ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
                           {[
                             "Недвижимость в Турции",
@@ -344,12 +405,18 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                           )}
 
                           <div className="group">
-                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">Планируемый бюджет (₽)</label>
+                            <label className="text-[10px] uppercase tracking-widest font-bold opacity-40 block mb-3">
+                              {formData.service === "Аренда жилых помещений в Москве" 
+                                ? "Желаемая плата в месяц (₽)" 
+                                : formData.intent === "Продать/Сдать" ? "Желаемая цена (₽)" : "Планируемый бюджет (₽)"}
+                            </label>
                             <input 
                               name="budget"
                               value={formData.budget}
                               onChange={handleInputChange}
-                              placeholder="Например: 50 - 80 млн"
+                              placeholder={formData.service === "Аренда жилых помещений в Москве" 
+                                ? "Например: 150 000" 
+                                : formData.intent === "Продать/Сдать" ? "Например: 120 млн" : "Например: 50 - 80 млн"}
                               className="w-full bg-transparent border-b border-luxury-stone py-2 text-base outline-none focus:border-luxury-gold transition-colors"
                             />
                           </div>
@@ -366,9 +433,9 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                       </motion.div>
                     )}
 
-                    {step === 3 && (
+                    {step === 4 && (
                       <motion.div
-                        key="step3"
+                        key="step4"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
@@ -433,7 +500,7 @@ export const ConsultationWizard = ({ isOpen, onClose, initialStep = 1 }: WizardP
                         </div>
 
                         <div className="pt-8 flex gap-4">
-                          {initialStep !== 3 && (
+                          {initialStep !== 4 && (
                             <button onClick={prevStep} className="p-5 border border-luxury-stone hover:bg-luxury-stone transition-colors group">
                               <ChevronLeft size={16} className="text-luxury-charcoal" />
                             </button>
